@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Slider from "react-slick";
 import axios from 'axios';
 import baseUrl from '../../utils/baseUrl';
+import Loading from '../Loading/Loading';
 
 const settings = {
     infinite: true,
@@ -42,7 +43,7 @@ export default function Categoryslider() {
     }, []);
 
     if (loading) {
-        return <div className='bg-info vh-50 text-center m-5 d-flex justify-content-center align-items-center'>Loading...</div>;
+        return <Loading />;
     }
 
     if (error) {

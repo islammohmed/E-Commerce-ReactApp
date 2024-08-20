@@ -1,7 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom';
+import { StoreContext } from '../../context/StoreContext';
+import { notify } from '../../utils/notify';
 
 export default function Product({ products }) {
+    let { addToCart, getCartCount } = useContext(StoreContext)
+    async function addProduct(product) {
+        let token = localStorage.getItem('token')
+        if (token) {
+            let response = await addToCart(token, product)
+            if (response.status == '200') {
+                getCartCount()
+                notify('Product added Successfully', 'success')
+            }
+        } else {
+            alert('you are Not loggedIn')
+        }
+    }
     return (
         <>
             {
@@ -19,8 +34,8 @@ export default function Product({ products }) {
                                         {item.rateAvg}
                                     </div>
                                 </div>
-                                <button className='btn bg-main text-white w-100 '> Add to Cart</button>
                             </Link>
+                            <button onClick={() => addProduct(item._id)} className='btn bg-main text-white w-100 '> Add to Cart</button>
                         </div>
                     </div>
                 })

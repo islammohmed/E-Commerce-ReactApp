@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import baseUrl from '../../utils/baseUrl';
-
+import { Helmet } from "react-helmet";
 export default function ProductsDetails() {
 
     let { id } = useParams()
@@ -14,7 +14,6 @@ export default function ProductsDetails() {
         try {
 
             const { data } = await axios.get(`${baseUrl}/product/${id}`);
-            console.log(data);
             setProduct(data.product);
             setLoading(false);
         } catch (err) {
@@ -38,6 +37,9 @@ export default function ProductsDetails() {
     return (
 
         <>
+            <Helmet>
+                <title>Products Details</title>
+            </Helmet>
             <div className="container">
                 <div className="row">
                     <div className="col-md-3">

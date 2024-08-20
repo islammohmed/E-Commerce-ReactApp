@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import baseUrl from '../../utils/baseUrl';
 import Product from '../Product/Product';
+import Loading from '../Loading/Loading';
 
 export default function Products() {
     const [products, setProducts] = useState([]);
@@ -33,7 +34,10 @@ export default function Products() {
     }, []);
 
     if (loading) {
-        return <div className='bg-info vh-50 text-center m-5 d-flex justify-content-center align-items-center'>Loading...</div>;
+        return
+        <>
+            <Loading />
+        </>
     }
 
     if (error) {

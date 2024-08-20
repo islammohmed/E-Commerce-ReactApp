@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Slider from "react-slick";
 import slider1 from "../../../src/images/slider1.jpg"
 import slider3 from "../../../src/images/slider3.jpeg"
 import slider4 from "../../../src/images/slider 4.png"
 import slider5 from "../../../src/images/slider5.png"
 import slider6 from "../../../src/images/slider4.jpeg"
+import { StoreContext } from '../../context/StoreContext';
 export default function Mainslider() {
     var settings = {
         dots: true,
@@ -15,7 +16,8 @@ export default function Mainslider() {
     };
     return (
         <>
-            <div className="my-3 container">
+            <div className="my-4 container">
+
                 <Slider {...settings}>
                     <img src={slider1} alt="slider1" />
                     <img src={slider3} alt="slider3" />
