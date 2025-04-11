@@ -1,83 +1,94 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { StoreContext } from '../../context/StoreContext'
-import { notify } from '../../utils/notify'
-import Loading from '../Loading/Loading'
-import { Link } from 'react-router-dom'
+import React, { useContext } from "react";
+import { StoreContext } from "../../context/StoreContext";
 import { Helmet } from "react-helmet";
+import { toast } from "react-toastify";
+
 export default function Cart() {
-    let { getUserCart, removeCartItem, updateQuantity, getCartCount } = useContext(StoreContext)
-    const [Cart, setCart] = useState([])
-    const [totalPrice, settotalPrice] = useState([])
+  const { cart, updateCount, removeFromCart } = useContext(StoreContext);
 
-    async function getCart() {
-        let token = localStorage.getItem('token')
-        if (token) {
-            let response = await getUserCart(token)
-            console.log(response);
+  const notify = (msg, type) => toast[type](msg);
 
-            setCart(response.data.cart.cartItem)
-            settotalPrice(response.data.cart.totalprice)
-        }
-    }
-    async function removeFromCart(product) {
-        let token = localStorage.getItem('token')
-        if (token) {
-            let response = await removeCartItem(token, product)
-            notify('produc deleted Successfully', 'success')
-            setCart(response.data.cart.cartItem)
-            settotalPrice(response.data.cart.totalprice)
-        }
-    }
-    async function updateCount(product, quantity) {
-        let token = localStorage.getItem('token')
-        if (token) {
-            let response = await updateQuantity(token, quantity, product)
-            notify('product updated', 'success')
-            setCart(response.data.cart.cartItem)
-            settotalPrice(response.data.cart.totalprice)
-        }
+  const changeCount = async (id, newCount) => {
+    if (newCount < 1) {
+      notify("Minimum quantity is 1", "warning");
+      return;
     }
 
-    useEffect(() => {
-        getCart()
-    }, [])
+    const { status } = await updateCount(id, newCount);
+    if (status === 200) {
+      notify("Cart updated", "success");
+    } else {
+      notify("Failed to update cart", "error");
+    }
+  };
+
+  const handleRemove = async (productId) => {
+    const { status } = await removeFromCart(productId);
+    if (status === 200) {
+      notify("Item removed", "info");
+    } else {
+      notify("Failed to remove item", "error");
+    }
+  };
+
+  if (cart.length === 0) {
     return (
-        <>
-            <Helmet>
-                <title>Cart Details</title>
-            </Helmet>
-            {Cart.length != 0 ? <div className="container">
-                <div className="bg-main-light p-3 my-4">
-                    <h3>Shop Cart</h3>
-                    <h6 className='text-main my-3 fw-bold'>Total Cart Price: {totalPrice}</h6>
-                    {Cart.map((item) => {
-                        return <div key={item._id} className='row my-3'>
-                            <div className="col-md-1 ">
-                                <img className='w-100' src={item.product.imageCover} alt="" />
-                            </div>
-                            <div className="col-md-11 d-flex justify-content-between">
-                                <div>
-                                    <h6>{item.product.title}</h6>
-                                    <h6 className='text-main mx-2'>{item.price} EGP</h6>
-                                    <button onClick={() => {
-                                        removeFromCart(item._id)
-                                        getCartCount()
-                                    }
-                                    } className='text-danger border-0'>Remove <i className="fa-solid fa-trash"></i></button>
-                                </div>
-                                <div>
-                                    <button onClick={() => updateCount(item._id, item.quantity + 1)} className='btn btn-border'>+</button>
-                                    <span className='mx-2'>{item.quantity}</span>
-                                    <button onClick={() => updateCount(item._id, item.quantity - 1)} className='btn btn-border'>-</button>
-                                </div>
-                            </div>
-                        </div>
-                    })}
-                    <Link className='btn bg-main text-white' to={'/checkout'}>CHECKOUT</Link>
+      <div className="vh-100 d-flex align-items-center justify-content-center">
+        <h3>No Items In Cart</h3>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Helmet>
+        <title>Cart</title>
+      </Helmet>
+      <div className="container my-5">
+        <h2>Cart</h2>
+        <div className="row">
+          {cart.map((item) => (
+            <div
+              key={item._id}
+              className="col-md-12 border p-3 my-3 rounded shadow-sm d-flex align-items-center justify-content-between"
+            >
+              <img
+                src={item.product.imageCover}
+                alt={item.product.title}
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+              />
+              <div className="flex-grow-1 px-3">
+                <h5>{item.product.title}</h5>
+                <p className="text-muted">{item.product.description}</p>
+                <div className="d-flex align-items-center gap-3">
+                  <button
+                    className="btn btn-outline-success"
+                    onClick={() => changeCount(item._id, item.quantity + 1)}
+                  >
+                    +
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button
+                    className="btn btn-outline-danger"
+                    onClick={() => changeCount(item._id, item.quantity - 1)}
+                  >
+                    -
+                  </button>
                 </div>
-            </div >
-                : <h1><Loading /></h1>
-            }
-        </>
-    )
+              </div>
+              <div className="text-end d-flex flex-column align-items-end">
+                <strong>{item.price} EGP</strong>
+                <button
+                  className="btn btn-sm btn-danger mt-2"
+                  onClick={() => handleRemove(item._id)}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
 }

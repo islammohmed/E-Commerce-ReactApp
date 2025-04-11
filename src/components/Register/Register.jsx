@@ -13,7 +13,7 @@ export default function Register() {
     let validationSchema = Yup.object({
         name: Yup.string().min(3).max(15).required(),
         email: Yup.string().email().required(),
-        password: Yup.string().matches(/^[A-Z][a-z0-9@#$%]{5,8}$/, 'password must match the Pattern').required(),
+        password: Yup.string().matches(/^[A-Z][a-z0-9@#$%]{5,8}$/, 'password must match the Pattern => "start with capital and follow with smal and @|#|$|%"').required(),
         rePassword: Yup.string().oneOf([Yup.ref('password')], 'password and RePassword not match').required(),
     })
     let registerFormik = useFormik({
