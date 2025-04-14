@@ -1,6 +1,6 @@
 import "./App.css";
 import MainLayout from "./Layouts/MainLayout.jsx";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom"; // <-- Use HashRouter here
 import HomePage from "./Pages/HomePage.jsx";
 import Products from "./components/Products/Products.jsx";
 import ProductsDetails from "./components/ProductsDetails/ProductsDetails.jsx";
@@ -8,9 +8,6 @@ import Login from "./components/Login/Login.jsx";
 import Register from "./components/Register/Register.jsx";
 import Cart from "./components/Cart/Cart.jsx";
 import Checkout from "./components/Checkout/Checkout.jsx";
-import CategoryDetails from "./Pages/CategoryDetails.jsx";
-import BrandDetails from "./Pages/BrandDetails.jsx";
-
 import { ToastContainer } from "react-toastify";
 import { Offline } from "react-detect-offline";
 import StoreContextProvider from "./context/StoreContext";
@@ -42,58 +39,6 @@ function App() {
     }
   }, []);
 
-  const routes = createBrowserRouter([
-    {
-      path: "/",
-      element: <MainLayout UserData={UserData} setUserData={setUserData} />,
-      children: [
-        {
-          index: true,
-          element: (
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: "products",
-          element: (
-            <ProtectedRoute>
-              <Products />
-            </ProtectedRoute>
-          ),
-        },
-
-        {
-          path: "product-details/:id",
-          element: (
-            <ProtectedRoute>
-              <ProductsDetails />
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: "cart",
-          element: (
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: "checkout",
-          element: (
-            <ProtectedRoute>
-              <Checkout />
-            </ProtectedRoute>
-          ),
-        },
-        { path: "login", element: <Login saveUserData={saveUserData} /> },
-        { path: "register", element: <Register /> },
-      ],
-    },
-  ]);
-
   return (
     <>
       <ToastContainer theme="colored" />
@@ -101,7 +46,63 @@ function App() {
         <Offline>
           <div className="network">You are Offline</div>
         </Offline>
-        <RouterProvider router={routes} />
+        {/* Replace RouterProvider with HashRouter */}
+        <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <MainLayout UserData={UserData} setUserData={setUserData} />
+              }
+            >
+              <Route
+                index
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="products"
+                element={
+                  <ProtectedRoute>
+                    <Products />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="product-details/:id"
+                element={
+                  <ProtectedRoute>
+                    <ProductsDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="cart"
+                element={
+                  <ProtectedRoute>
+                    <Cart />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="checkout"
+                element={
+                  <ProtectedRoute>
+                    <Checkout />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="login"
+                element={<Login saveUserData={saveUserData} />}
+              />
+              <Route path="register" element={<Register />} />
+            </Route>
+          </Routes>
+        </Router>
       </StoreContextProvider>
     </>
   );

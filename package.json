@@ -3,6 +3,10 @@
   "homepage": "https://islammohmed.github.io/E-Commerce-ReactApp",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/islammohmed/E-Commerce-ReactApp.git"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@testing-library/jest-dom": "^5.17.0",
